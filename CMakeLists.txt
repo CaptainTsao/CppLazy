@@ -1,19 +1,19 @@
 cmake_minimum_required(VERSION 3.19)
-project(CppLazy
-        VERSION 1.0.0
-        DESCRIPTION
-        "A fast c++11 header only library for lazy evaluation and function tools"
-        LANGUAGES CXX)
+project(CppLazy LANGUAGES CXX C)
 
 set(CppLazy_warning_guard "SYSTEM")
 if (CppLazy_INCLUDE_WITHOUT_SYSTEM)
     set(CppLazy_warning_guard "")
 endif ()
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE debug)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # ---- Import {fmt} ----
-option(CppLazy_USE_STANDALONE "Standalone library without {fmt}" YES)
-option(CppLazy_USE_INSTALLED_FMT "Import {fmt} using find_package" NO)
+option(CppLazy_USE_STANDALONE "Standalone library without {fmt}" NO)
+option(CppLazy_USE_INSTALLED_FMT "Import {fmt} using find_package" YES)
 
 if (CppLazy_USE_STANDALONE)
     message(STATUS "Using cpp-lazy standalone version")
@@ -43,11 +43,11 @@ target_link_libraries(CppLazy INTERFACE fmt::fmt)
 target_compile_features(CppLazy INTERFACE cxx_std_11)
 
 target_include_directories(CppLazy
-        ${CppLazy_warning_guard}
+#        ${CppLazy_warning_guard}
         INTERFACE
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>")
 
-set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD 20)
 
 #add_executable(CppLazy main.cpp include/Lazy/detail/LazyTools.hpp)
 
@@ -58,30 +58,30 @@ set(CMAKE_CXX_STANDARD 11)
 #set(cpp-lazy_directory "cpp-lazy-${PROJECT_VERSION}")
 #set(cpp-lazy_include_directory "${CMAKE_INSTALL_INCLUDEDIR}/${cpp-lazy_directory}")
 #
-#install(TARGETS cpp-lazy
-#        EXPORT cpp-lazyTargets
+#install(TARGETS CppLazy
+#        EXPORT CppLazyTargets
 #        INCLUDES
-#        DESTINATION "${cpp-lazy_include_directory}")
+#        DESTINATION "${CppLazy_include_directory}")
 #
 #write_basic_package_version_file(
-#        cpp-lazyConfigVersion.cmake
+#        CppLazyConfigVersion.cmake
 #        VERSION ${PROJECT_VERSION}
 #        COMPATIBILITY SameMajorVersion
 #        ARCH_INDEPENDENT)
 #
-#set(cpp-lazy_install_cmakedir "${CMAKE_INSTALL_LIBDIR}/cmake/${cpp-lazy_directory}")
+#set(CppLazy_install_cmakedir "${CMAKE_INSTALL_LIBDIR}/cmake/${CppLazy_directory}")
 #
-#install(EXPORT cpp-lazyTargets
-#        NAMESPACE cpp-lazy::
-#        DESTINATION "${cpp-lazy_install_cmakedir}")
+#install(EXPORT CppLazyTargets
+#        NAMESPACE CppLazy::
+#        DESTINATION "${CppLazy_install_cmakedir}")
 #
 #install(FILES
-#        "${PROJECT_SOURCE_DIR}/cmake/cpp-lazyConfig.cmake"
-#        "${PROJECT_BINARY_DIR}/cpp-lazyConfigVersion.cmake"
-#        DESTINATION "${cpp-lazy_install_cmakedir}")
+#        "${PROJECT_SOURCE_DIR}/cmake/CppLazyConfig.cmake"
+#        "${PROJECT_BINARY_DIR}/CppLazyConfigVersion.cmake"
+#        DESTINATION "${CppLazy_install_cmakedir}")
 #
 #install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/"
-#        DESTINATION "${cpp-lazy_include_directory}")
+#        DESTINATION "${CppLazy_include_directory}")
 #
 #set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE.md")
 #

@@ -25,7 +25,7 @@ namespace lz {
                               "lambda's are not default constructable pre c++20");
             }
 
-            constexpr explicit FunctionContainer(std::true_type /* isDefaultConstructable*/):
+            constexpr explicit FunctionContainer(std::true_type /* isDefaultConstructable*/) :
                     func_(), is_constructed_(true) {}
 
             template<class F>
@@ -60,12 +60,12 @@ namespace lz {
             }
 
         public:
-            constexpr explicit FunctionContainer(const Func &&func) :func_(func), is_constructed_(true) {}
+            constexpr explicit FunctionContainer(const Func &&func) : func_(func), is_constructed_(true) {}
 
             constexpr explicit FunctionContainer(Func &&func) :
                     func_(std::move(func)), is_constructed_(true) {}
 
-            constexpr FunctionContainer():FunctionContainer(std::is_default_constructible < Func > ) {}
+            constexpr FunctionContainer() : FunctionContainer(std::is_default_constructible<Func>) {}
 
             LZ_CONSTEXPR_CXX_14 FunctionContainer(FunctionContainer &&other) :
                     func_(std::move(other.func_)),
@@ -99,7 +99,7 @@ namespace lz {
             }
 
             template<class... Args>
-            constexpr auto operator()(Args&&...args) const -> decltype(func_(std::forward<Args>(args)...)) {
+            constexpr auto operator()(Args &&...args) const -> decltype(func_(std::forward<Args>(args)...)) {
                 return func_(std::forward<Args>(args)...);
             }
         };

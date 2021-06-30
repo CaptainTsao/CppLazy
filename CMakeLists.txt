@@ -46,7 +46,12 @@ target_include_directories(CppLazy
 #        ${CppLazy_warning_guard}
         INTERFACE
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>")
-
+#include_directories("${PROJECT_SOURCE_DIR}/include/Lazy/Detail")
+add_library(CppLzay main.cpp
+        include/Lazy/detail/FunctionContainer.hpp
+        include/Lazy/detail/LazyTools.hpp
+        include/Lazy/detail/MapIterator.hpp
+        include/Lazy/detail/FlattenIterator.hpp)
 #set(CMAKE_CXX_STANDARD 20)
 
 #add_executable(CppLazy main.cpp include/Lazy/detail/LazyTools.hpp)

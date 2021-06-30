@@ -99,7 +99,11 @@ namespace lz {
 template<typename I>
 concept BasicIterable = requires(I i) {
   { std::begin(i) } -> std::input_or_output_iterator;
+  { std::end(i) } -> std::input_or_output_iterator;
 };
+
+template<typename I>
+concept Arithmetic = std::is_arithmetic_v<I>;
 };
 
 

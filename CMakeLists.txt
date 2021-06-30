@@ -50,3 +50,39 @@ target_include_directories(CppLazy
 set(CMAKE_CXX_STANDARD 11)
 
 #add_executable(CppLazy main.cpp include/Lazy/detail/LazyTools.hpp)
+
+# ---- Install ----
+#include(CMakePackageConfigHelpers)
+#include(GNUInstallDirs)
+#
+#set(cpp-lazy_directory "cpp-lazy-${PROJECT_VERSION}")
+#set(cpp-lazy_include_directory "${CMAKE_INSTALL_INCLUDEDIR}/${cpp-lazy_directory}")
+#
+#install(TARGETS cpp-lazy
+#        EXPORT cpp-lazyTargets
+#        INCLUDES
+#        DESTINATION "${cpp-lazy_include_directory}")
+#
+#write_basic_package_version_file(
+#        cpp-lazyConfigVersion.cmake
+#        VERSION ${PROJECT_VERSION}
+#        COMPATIBILITY SameMajorVersion
+#        ARCH_INDEPENDENT)
+#
+#set(cpp-lazy_install_cmakedir "${CMAKE_INSTALL_LIBDIR}/cmake/${cpp-lazy_directory}")
+#
+#install(EXPORT cpp-lazyTargets
+#        NAMESPACE cpp-lazy::
+#        DESTINATION "${cpp-lazy_install_cmakedir}")
+#
+#install(FILES
+#        "${PROJECT_SOURCE_DIR}/cmake/cpp-lazyConfig.cmake"
+#        "${PROJECT_BINARY_DIR}/cpp-lazyConfigVersion.cmake"
+#        DESTINATION "${cpp-lazy_install_cmakedir}")
+#
+#install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/"
+#        DESTINATION "${cpp-lazy_include_directory}")
+#
+#set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE.md")
+#
+#include(CPack)

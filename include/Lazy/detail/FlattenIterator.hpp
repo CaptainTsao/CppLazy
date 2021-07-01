@@ -324,9 +324,119 @@ class FlattenIterator {
     return tmp;
   }
 
-  tep
+  template<class Iterator>
+  class FlattenIterator<Iterator, 0> {
+    FlattenWrapper<Iterator> _range;
+    using Traits = std::iterator_traits<Iterator>;
+
+   public:
+    using pointer = typename Traits::pointer;
+    using reference = typename Traits::reference;
+    using value_type = typename Traits::value_type;
+    using iterator_category =
+    typename std::common_type<std::bidirectional_iterator_tag, typename Traits::iterator_category>::type;
+    using difference_type = typename std::iterator_traits<Iterator>::difference_type;
+
+    constexpr FlattenIterator() = default;
+
+    constexpr FlattenIterator(Iterator it, Iterator begin, Iterator end) :
+        _range(std::move(it), std::move(begin), std::move(end)) {
+    }
+
+    LZ_CONSTEXPR_CXX_20 bool hasSome() const { // NOLINT
+      return _range.hasSome();
+    }
+
+    LZ_CONSTEXPR_CXX_20 bool hasPrev() const { // NOLINT
+      return _range.hasPrev();
+    }
+
+    LZ_NODISCARD LZ_CONSTEXPR_CXX_20 reference operator*() const {
+      return *_range;
+    }
+
+    LZ_NODISCARD LZ_CONSTEXPR_CXX_20 pointer operator->() const {
+      return &*_range;
+    }
+
+    LZ_NODISCARD LZ_CONSTEXPR_CXX_20 friend bool operator!=(const FlattenIterator &a, const FlattenIterator &b) {
+      return a._range != b._range;
+    }
+
+    LZ_NODISCARD LZ_CONSTEXPR_CXX_20 friend bool operator==(const FlattenIterator &a, const FlattenIterator &b) {
+      return !(a != b); // NOLINT
+    }
+
+    LZ_CONSTEXPR_CXX_20 FlattenIterator &operator++() {
+      ++_range;
+      return *this;
+    }
+
+    LZ_CONSTEXPR_CXX_20 FlattenIterator operator++(int) {
+      FlattenIterator tmp(*this);
+      ++*this;
+      return tmp;
+    }
+
+    LZ_CONSTEXPR_CXX_20 FlattenIterator &operator--() {
+      --_range;
+      return *this;
+    }
+
+    LZ_CONSTEXPR_CXX_20 FlattenIterator operator--(int) {
+      FlattenIterator tmp(*this);
+      --*this;
+      return tmp;
+    }
+
+    LZ_CONSTEXPR_CXX_20 difference_type distance() const {
+      return _range.distance();
+    }
+
+    LZ_NODISCARD LZ_CONSTEXPR_CXX_20 friend difference_type operator-(const FlattenIterator &,
+                                                                      const FlattenIterator &b) {
+      return b._range.distance();
+    }
+
+    LZ_NODISCARD LZ_CONSTEXPR_CXX_20 FlattenIterator operator+(const difference_type offset) const {
+      FlattenIterator tmp(*this);
+      tmp._range = tmp._range + offset;
+      return tmp;
+    }
+  };
 };
 }// namespace internal
+/**
+ * Gets the distance of the iterator. Please note that the first argument *must* be created from `flatten(...).begin()`, not
+ * `flatten(...).end()`. The second argument is not used. Distance is O(N), where N is the amount of inner containers.
+ * (this is only the case for random access iterators, or iterators that define a custom `distance`).
+ * @param begin The flatten iterator created from `lz::flatten(...).begin()`
+ * @return The distance (size/length) of the iterator.
+ */
+template<LZ_CONCEPT_ITERATOR Iterator, int N>
+LZ_NODISCARD LZ_CONSTEXPR_CXX_20 typename internal::FlattenIterator<Iterator, N>::difference_type
+Distance(const internal::FlattenIterator<Iterator, N> &begin, const internal::FlattenIterator<Iterator, N> &) {
+  return begin.Distance();
+}
+
+/**
+ * Gets the nth value of the iterator. If value >= 0, this function is O(N), where N is the amount of inner containers.
+ * (this is only the case for random access iterators, or iterators that define a custom `distance`). Otherwise this function is
+ * O(N * M) where M is the amount of elements inside that dimension and N is the amount of inner containers.
+ * @param iter The iterator to increment.
+ * @param value The amount to increment
+ * @return A flatten iterator with iter + value.
+ */
+template<LZ_CONCEPT_ITERATOR Iterator, int N>
+LZ_NODISCARD LZ_CONSTEXPR_CXX_20 internal::FlattenIterator<Iterator, N>
+next(const internal::FlattenIterator<Iterator, N> &iter,
+     const internal::DiffType<internal::FlattenIterator<Iterator, N>> value) {
+  if (value < 0) {
+    return std::next(iter, value);
+  }
+  return iter + value;
+}
+
 }// namespace lz
 
 #endif //CPPLAZY_FLATTENITERATOR_HPP

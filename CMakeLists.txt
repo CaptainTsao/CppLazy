@@ -12,8 +12,8 @@ set(CMAKE_BUILD_TYPE debug)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # ---- Import {fmt} ----
-option(CppLazy_USE_STANDALONE "Standalone library without {fmt}" NO)
-option(CppLazy_USE_INSTALLED_FMT "Import {fmt} using find_package" YES)
+option(CppLazy_USE_STANDALONE "Standalone library without {fmt}" YES)
+option(CppLazy_USE_INSTALLED_FMT "Import {fmt} using find_package" NO)
 
 if (CppLazy_USE_STANDALONE)
     message(STATUS "Using cpp-lazy standalone version")
@@ -51,7 +51,7 @@ add_library(CppLzay main.cpp
         include/Lazy/detail/FunctionContainer.hpp
         include/Lazy/detail/LazyTools.hpp
         include/Lazy/detail/MapIterator.hpp
-        include/Lazy/detail/FlattenIterator.hpp)
+        include/Lazy/detail/FlattenIterator.hpp include/Lazy/detail/FilterIterator.hpp include/Lazy/detail/BasicIteratorView.hpp)
 #set(CMAKE_CXX_STANDARD 20)
 
 #add_executable(CppLazy main.cpp include/Lazy/detail/LazyTools.hpp)

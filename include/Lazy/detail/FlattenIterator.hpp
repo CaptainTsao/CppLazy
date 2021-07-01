@@ -57,7 +57,7 @@ struct HasReference<T, AliasWrapperT<typename T::reference>> : std::true_type {
 template<typename T>
 struct IsIterator {
   static constexpr bool value = HasValueType<T>::value && HasDifferenceType<T>::value && HasPointer<T>::value
-                                && HasReference<T>::value && HasIterCat<T>::value;
+      && HasReference<T>::value && HasIterCat<T>::value;
 };
 
 template<typename T, typename = void>
@@ -98,18 +98,18 @@ class FlattenWrapper {
   Iterator end_{};
 
   using IterTraits = std::iterator_traits<Iterator>;
-public:
+ public:
   using reference = typename IterTraits::reference;
   using pointer = FakePointerProxy<reference>;
   using value_type = typename IterTraits::value_type;
   using iterator_category = typename std::common_type<std::bidirectional_iterator_tag,
-          typename IterTraits::iterator_category>::type;
+                                                      typename IterTraits::iterator_category>::type;
   using difference_type = typename IterTraits::difference_type;
 
   constexpr FlattenWrapper() = default;
 
   LZ_CONSTEXPR_CXX_20 FlattenWrapper(Iterator current, Iterator begin, Iterator end) :
-          begin_(std::move(begin)), current_(std::move(current)), end_(std::move(end)) {}
+      begin_(std::move(begin)), current_(std::move(current)), end_(std::move(end)) {}
 
   LZ_CONSTEXPR_CXX_20 bool HasSome() const {
     return current_ != end_;
@@ -179,13 +179,14 @@ public:
 template<class Iterator, int N>
 class FlattenIterator {
   using Inner = FlattenIterator<decltype(std::begin(*std::declval<Iterator>())), N - 1>;
-public:
+ public:
   using reference = typename Inner::reference;
   using pointer = FakePointerProxy<reference>;
   using value_type = typename Inner::value_type;
-  using iterator_category = typename std::common_type<std::bidirectional_iterator_tag, typename Inner::iterator_category>::type;
+  using iterator_category = typename std::common_type<std::bidirectional_iterator_tag,
+                                                      typename Inner::iterator_category>::type;
   using difference_type = typename std::iterator_traits<Iterator>::difference_type;
-private:
+ private:
   FlattenWrapper<Iterator> outer_iter_{};
   Inner inner_iter_{};
 
@@ -204,11 +205,11 @@ private:
     inner_iter_ = {};
   }
 
-public:
+ public:
   constexpr FlattenIterator() = default;
 
   LZ_CONSTEXPR_CXX_20 FlattenIterator(Iterator iterator, Iterator begin, Iterator end) :
-          outer_iter_(std::move(iterator), std::move(begin), std::move(end)) {
+      outer_iter_(std::move(iterator), std::move(begin), std::move(end)) {
     if (outer_iter_.HasSome()) {
       const auto beg = std::begin(*outer_iter_);
       inner_iter_ = {beg, beg, std::end(*outer_iter_)};

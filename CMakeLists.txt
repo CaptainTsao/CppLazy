@@ -51,7 +51,16 @@ add_library(CppLzay main.cpp
         include/Lazy/detail/FunctionContainer.hpp
         include/Lazy/detail/LazyTools.hpp
         include/Lazy/detail/MapIterator.hpp
-        include/Lazy/detail/FlattenIterator.hpp include/Lazy/detail/FilterIterator.hpp include/Lazy/detail/BasicIteratorView.hpp include/Lazy/detail/SplitIterator.hpp include/Lazy/detail/UniqueIterator.hpp include/Lazy/Map.hpp include/Lazy/Flatten.hpp)
+        include/Lazy/detail/FlattenIterator.hpp
+        include/Lazy/detail/FilterIterator.hpp
+        include/Lazy/detail/BasicIteratorView.hpp
+        include/Lazy/detail/SplitIterator.hpp
+        include/Lazy/detail/UniqueIterator.hpp
+        include/Lazy/Map.hpp
+        include/Lazy/Flatten.hpp
+        include/Lazy/detail/ChunksIterator.hpp
+        include/Lazy/detail/ConcatenateIterator.hpp
+        include/Lazy/detail/RangeIterator.hpp)
 #set(CMAKE_CXX_STANDARD 20)
 
 #add_executable(CppLazy main.cpp include/Lazy/detail/LazyTools.hpp)

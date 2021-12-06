@@ -298,20 +298,21 @@ LZ_CONSTEXPR_CXX_20 std::string to_string(const bool b) {
 
 template<class T>
 class FakePointerProxy {
-  T _t;
+ private:
+  T t_;
 
-  using Pointer = decltype(std::addressof(_t));
+  using Pointer = decltype(std::addressof(t_));
 
  public:
-  constexpr explicit FakePointerProxy(const T &t) : _t(t) {
+  constexpr explicit FakePointerProxy(const T &t) : t_(t) {
   }
 
   LZ_CONSTEXPR_CXX_17 Pointer operator->() const noexcept {
-    return std::addressof(_t);
+    return std::addressof(t_);
   }
 
   LZ_CONSTEXPR_CXX_17 Pointer operator->() noexcept {
-    return std::addressof(_t);
+    return std::addressof(t_);
   }
 };
 

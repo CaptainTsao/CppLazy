@@ -60,7 +60,8 @@ add_library(CppLzay main.cpp
         include/Lazy/Flatten.hpp
         include/Lazy/detail/ChunksIterator.hpp
         include/Lazy/detail/ConcatenateIterator.hpp
-        include/Lazy/detail/RangeIterator.hpp)
+        include/Lazy/detail/RangeIterator.hpp
+        include/Lazy/detail/GroupByIterator.hpp)
 #set(CMAKE_CXX_STANDARD 20)
 
 #add_executable(CppLazy main.cpp include/Lazy/detail/LazyTools.hpp)

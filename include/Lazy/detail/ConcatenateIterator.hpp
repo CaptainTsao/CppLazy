@@ -287,6 +287,98 @@ class ConcatenateIterator {
         std::get<I>(other.iterators_))...};
     return std::accumulate(std::begin(totals), std::end(totals), difference_type{0});
   }
+
+ public:
+  LZ_CONSTEXPR_CXX_20 ConcatenateIterator(IterTuple iterators, IterTuple begin, IterTuple end) :
+      iterators_(std::move(iterators)), begin_(std::move(begin)), end_(std::move(end)) {}
+
+  constexpr ConcatenateIterator() = default;
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 reference operator*() const {
+    return Deref<IterTuple, 0>()(iterators_, end_);
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 pointer operator->() const {
+    return FakePointerProxy<decltype(**this)>(**this);
+  }
+
+  LZ_CONSTEXPR_CXX_20 ConcatenateIterator &operator++() {
+    PlusPlus<IterTuple, 0>()(iterators_, end_);
+    return *this;
+  }
+
+  LZ_CONSTEXPR_CXX_20 ConcatenateIterator operator++(int) {
+    ConcatenateIterator tmp(*this);
+    ++(*this);
+    return tmp;
+  }
+
+  LZ_CONSTEXPR_CXX_20 ConcatenateIterator &operator--() {
+    MinusMinus<IterTuple, sizeof...(Iterators) - 1>()(iterators_, begin_, end_);
+    return *this;
+  }
+
+  LZ_CONSTEXPR_CXX_20 ConcatenateIterator operator--(int) {
+    ConcatenateIterator tmp(*this);
+    --(*this);
+    return tmp;
+  }
+
+  LZ_CONSTEXPR_CXX_20 ConcatenateIterator &operator+=(const difference_type offset) {
+    PlusIs<IterTuple, 0>()(iterators_, end_, offset);
+    return *this;
+  }
+
+  LZ_CONSTEXPR_CXX_20 ConcatenateIterator &operator-=(const difference_type offset) {
+    MinIs<IterTuple, sizeof...(Iterators) - 1>()(iterators_, begin_, end_, offset);
+    return *this;
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 ConcatenateIterator operator+(const difference_type offset) const {
+    ConcatenateIterator tmp(*this);
+    tmp += offset;
+    return tmp;
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 ConcatenateIterator operator-(const difference_type offset) const {
+    ConcatenateIterator tmp(*this);
+    tmp -= offset;
+    return tmp;
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 difference_type operator-(const ConcatenateIterator &other) const {
+    return minus(MakeIndexSequence<sizeof...(Iterators)>(), other);
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 friend bool operator!=(const ConcatenateIterator &a,
+                                                          const ConcatenateIterator &b) noexcept {
+    return NotEqual<IterTuple, 0>()(a.iterators_, b.iterators_);
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 friend bool operator==(const ConcatenateIterator &a,
+                                                          const ConcatenateIterator &b) noexcept {
+    return !(a != b); // NOLINT
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 reference operator[](const difference_type offset) const {
+    return *(*this + offset);
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 friend bool operator<(const ConcatenateIterator &a, const ConcatenateIterator &b) {
+    return b - a > 0;
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 friend bool operator>(const ConcatenateIterator &a, const ConcatenateIterator &b) {
+    return b < a;
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 friend bool operator<=(const ConcatenateIterator &a, const ConcatenateIterator &b) {
+    return !(b < a); // NOLINT
+  }
+
+  LZ_NODISCARD LZ_CONSTEXPR_CXX_20 friend bool operator>=(const ConcatenateIterator &a, const ConcatenateIterator &b) {
+    return !(a < b); // NOLINT
+  }
 };
 
 } // namespace internal

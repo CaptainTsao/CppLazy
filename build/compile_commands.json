@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/rcao/Work/Cpp/CppLazy/build",
+  "command": "/usr/bin/clang++-10 -DLZ_STANDALONE -g -std=gnu++17 -o CMakeFiles/CppLzay.dir/main.cpp.o -c /home/rcao/Work/Cpp/CppLazy/main.cpp",
+  "file": "/home/rcao/Work/Cpp/CppLazy/main.cpp"
+}
+]

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.18)
 project(CppLazy LANGUAGES CXX C)
 
 set(CppLazy_warning_guard "SYSTEM")
@@ -6,10 +6,10 @@ if (CppLazy_INCLUDE_WITHOUT_SYSTEM)
     set(CppLazy_warning_guard "")
 endif ()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE debug)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # ---- Import {fmt} ----
 option(CppLazy_USE_STANDALONE "Standalone library without {fmt}" YES)
@@ -61,7 +61,11 @@ add_library(CppLzay main.cpp
         include/Lazy/detail/ChunksIterator.hpp
         include/Lazy/detail/ConcatenateIterator.hpp
         include/Lazy/detail/RangeIterator.hpp
-        include/Lazy/detail/GroupByIterator.hpp)
+        include/Lazy/detail/GroupByIterator.hpp
+        include/Lazy/detail/ZipIterator.hpp
+        include/Lazy/detail/RandomIterator.hpp
+        include/Lazy/detail/LoopIterator.hpp
+        include/Lazy/detail/CartesianProductIterator.hpp)
 #set(CMAKE_CXX_STANDARD 20)
 
 #add_executable(CppLazy main.cpp include/Lazy/detail/LazyTools.hpp)

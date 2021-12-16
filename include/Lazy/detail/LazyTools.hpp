@@ -316,42 +316,6 @@ class FakePointerProxy {
   }
 };
 
-template<bool B>
-struct EnableIfImpl {};
-
-template<>
-struct EnableIfImpl<true> {
-  template<class T>
-  using type = T;
-};
-
-template<bool B, class T = void>
-using EnableIf = typename EnableIfImpl<B>::template type<T>;
-
-template<bool B>
-struct ConditionalImpl;
-
-template<>
-struct ConditionalImpl<true> {
-  template<class IfTrue, class /*IfFalse*/>
-  using type = IfTrue;
-};
-
-template<>
-struct ConditionalImpl<false> {
-  template<class /*IfTrue*/, class IfFalse>
-  using type = IfFalse;
-};
-
-template<bool B, class IfTrue, class IfFalse>
-using Conditional = typename ConditionalImpl<B>::template type<IfTrue, IfFalse>;
-
-template<class T, class =int>
-struct HasSize : std::false_type {};
-
-template<class T>
-struct HasSize<T, decltype((void) std::declval<T &>().size(), 0)> : std::true_type {};
-
 template<class T, class U, class... Vs>
 struct IsAllSame : std::integral_constant<bool, std::is_same<T, U>::value && IsAllSame<U, Vs...>::value> {
 };
@@ -373,14 +337,6 @@ inline constexpr bool isEven(const Arithmetic value) noexcept {
   return (value & 1) == 0;
 }
 } // namespace internal
-
-#if defined(LZ_HAS_STRING_VIEW)
-using StringView = std::string_view;
-#elif defined(LZ_STANDALONE)
-using StringView = std::string;
-#else
-using StringView = fmt::string_view;
-#endif
 
 template<LZ_CONCEPT_ITERATOR... Iterators>
 LZ_NODISCARD LZ_CONSTEXPR_CXX_20 typename internal::CartesianProductIterator<Iterators...>::difference_type
@@ -434,12 +390,4 @@ LZ_NODISCARD LZ_CONSTEXPR_CXX_20 internal::ExcludeIterator<Iterator>
 next(const internal::ExcludeIterator<Iterator> &, internal::DiffType<internal::ExcludeIterator<Iterator>> = 1);
 } // namespace lz
 
-namespace internal {
-template<class Iterator>
-[[maybe_unused]] DiffType<Iterator> get_iter_length(Iterator begin, Iterator end) {
-  using lz::distance;
-  using std::distance;
-  return distance(std::move(begin), std::move(end));
-}
-}
 #endif // LZ_LZ_TOOLS_HPP

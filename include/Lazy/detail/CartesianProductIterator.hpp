@@ -67,6 +67,71 @@ class CartesianProductIterator {
     const auto distance = get_iter_length(begin, std::get<I>(iterator_));
     std::get<I>(iterator_) = next(beg, distance - 1);
   }
+
+  template <std::size_t I>
+  LZ_CONSTEXPR_CXX_20 EnableIf<I == 0> do_prev_all() {
+    do_prev<0>();
+  }
+
+  template <std::size_t I>
+  LZ_CONSTEXPR_CXX_20 EnableIf<(I > 0)> do_prev_all() {
+    do_prev<I>();
+    do_prev_all<I - 1>();
+  }
+
+  template <std::size_t I>
+  LZ_CONSTEXPR_CXX_20 EnableIf<(I > 0)> previou() {
+    if (iterator_ == end_) {
+      do_prev_all<I - 1>();
+    } else {
+      auto& prev = std::get<I - 1>(iterator_);
+      if (prev == std::get<I - 1>(begin_)) {
+        prev = std::get<I - 1>(end_);
+        do_prev<I - 1>();
+        previou<I - 1>();
+      } else {
+        do_prev<I - 1>();
+      }
+    }
+  }
+
+#ifdef LZ_MSVC
+#pragma warning(pop)
+#endif  // LZ_MSVC
+
+  template <std::size_t I>
+  LZ_CONSTEXPR_CXX_20 EnableIf<I == 0> operator_plus_impl(
+      const difference_type offset) {
+    using lz::next;
+    using std::next;
+    auto& iterator = std::get<0>(iterator_);
+    iterator = next(std::move(iterator), offset);
+  }
+  template <std::size_t I>
+  LZ_CONSTEXPR_CXX_20 EnableIf<(I > 0)> operator_plus_impl(
+      const difference_type offset) {
+    using lz::next;
+    using std::next;
+
+    auto& iterator = std::get<I>(iterator_);
+    const auto& begin = std::get<I>(begin_);
+    const auto& end = std::get<I>(end_);
+    difference_type dist;
+    if (offset < 0) {
+      if (iterator == begin) {
+        iterator = end;
+        dist = get_iter_length(begin, iterator);
+      } else {
+        dist = get_iter_length(begin, iterator) + 1;
+      }
+    } else {
+      dist = get_iter_length(iterator, end);
+    }
+    const auto offsets = std::lldiv(offset, dist);
+    iterator =
+        next(std::move(iterator), static_cast<difference_type>(offsets.rem));
+    operator_plus_impl<I - 1>(static_cast<difference_type>(offsets.quot));
+  }
 #else
   template <std::size_t I>
   LZ_CONSTEXPR_CXX_20 void next() {

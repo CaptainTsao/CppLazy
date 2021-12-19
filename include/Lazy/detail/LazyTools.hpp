@@ -129,9 +129,7 @@ concept Arithmetic = std::is_arithmetic_v<I>;
 #endif // lz has concepts
 
 #ifndef NDEBUG
-
 #include <exception>
-
 #endif // NDEBUG
 
 namespace lz {
@@ -170,6 +168,9 @@ class FlattenIterator;
 template<class Iterator>
 class ExcludeIterator;
 
+template<class, bool>
+class RotateIteraror;
+
 template<class Iterable>
 constexpr auto begin(Iterable &&c) noexcept -> decltype(std::forward<Iterable>(c).begin()) {
   return std::forward<Iterable>(c).begin();
@@ -195,12 +196,10 @@ template<bool B, class U = void>
 using EnableIf = typename std::enable_if<B, U>::type;
 
 template<std::size_t...>
-struct IndexSequence {
-};
+struct IndexSequence {};
 
 template<std::size_t N, std::size_t... Rest>
-struct IndexSequenceHelper : public IndexSequenceHelper<N - 1, N - 1, Rest...> {
-};
+struct IndexSequenceHelper : public IndexSequenceHelper<N - 1, N - 1, Rest...> {};
 
 template<std::size_t... Next>
 struct IndexSequenceHelper<0, Next...> {
@@ -261,6 +260,9 @@ using FunctionReturnType = decltype(std::declval<Function>()(std::declval<Args>(
 
 template<class Iterable>
 using ValueTypeIterable = typename Decay<Iterable>::value_type;
+
+template<class Iterable>
+using DiffTypeIterable = typename std::iterator_traits<IterTypeFromIterable<Iterable>>::difference_type;
 
 #ifdef LZ_HAS_EXECUTION
 template<class T>
@@ -333,7 +335,7 @@ struct IsForward : std::is_convertible<IterCat<Iterator>, std::forward_iterator_
 };
 
 template<LZ_CONCEPT_INTEGRAL Arithmetic>
-inline constexpr bool isEven(const Arithmetic value) noexcept {
+inline constexpr bool is_even(const Arithmetic value) noexcept {
   return (value & 1) == 0;
 }
 } // namespace internal
@@ -388,6 +390,16 @@ next(const internal::FlattenIterator<Iterator, N> &,
 template<LZ_CONCEPT_ITERATOR Iterator>
 LZ_NODISCARD LZ_CONSTEXPR_CXX_20 internal::ExcludeIterator<Iterator>
 next(const internal::ExcludeIterator<Iterator> &, internal::DiffType<internal::ExcludeIterator<Iterator>> = 1);
+
+namespace iternal {
+template <class Iterator>
+DiffType<Iterator> get_iter_length(Iterator begin, Iterator end) {
+  using lz::distance;
+  using std::distance;
+  return distance(std::move(begin), std::move(end))
+}
+}
+
 } // namespace lz
 
 #endif // LZ_LZ_TOOLS_HPP

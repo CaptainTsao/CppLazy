@@ -51,7 +51,21 @@ class CartesianProductIterator {
         next<I - 1> （）；
       }
     }
-    { /* code */ }
+  }
+
+  template <std::size_t I, class Iter = Decay<decltype(std::get<I>(iterator_))>>
+  LZ_CONSTEXPR_CXX_20 EnableIf<IsBidirectional<Iter>::value> do_prev() {
+    --std::get<I>(iterator_);
+  }
+
+  template <std::size_t I, class Iter = Decay<decltype(std::get<I>(iterator_))>>
+  LZ_CONSTEXPR_CXX_20 EnableIf<!IsBidirectional<Iter>::value> do_prev() {
+    using lz::next;
+    using std::next;
+
+    const auto* beg = std::get<I>(begin_);
+    const auto distance = get_iter_length(begin, std::get<I>(iterator_));
+    std::get<I>(iterator_) = next(beg, distance - 1);
   }
 #else
   template <std::size_t I>
